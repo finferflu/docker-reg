@@ -31,12 +31,10 @@ done
 JSON="{$JSON }"
 echo $JSON
 
-CTL="etcdctl -C http://${ETCD_PORT_10000_TCP_ADDR}:${ETCD_PORT_10000_TCP_PORT}"
-
 KEY="/services/${SERV}/${MACH}"
-trap "$CTL rm $KEY; exit" SIGHUP SIGINT SIGTERM
+trap "etcdctl rm $KEY; exit" SIGHUP SIGINT SIGTERM
 
 while [ 1 ]; do
-  $CTL --debug set "$KEY" "${JSON}" --ttl 5
+  etcdctl --debug set "$KEY" "${JSON}" --ttl 5
   sleep 1
 done
