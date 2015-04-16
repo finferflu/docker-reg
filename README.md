@@ -1,0 +1,1 @@
+This image simply removes the unneeded custom `etcd` IP/port, and uses the default (`127.0.0.1:4001`) instead, so that no intermediate static ambassador is needed. More info [here](https://coreos.com/blog/docker-dynamic-ambassador-powered-by-etcd/).
