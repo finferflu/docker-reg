@@ -1,11 +1,11 @@
 #!/bin/bash
 
-MACH=$1
-PORT=$2
-SERV=$3
-shift
-shift
-shift
+ETCD_IP=$1
+ETCD_PORT=$2
+MACH=$3
+PORT=$4
+SERV=$5
+shift 5
 KV=$@
 DOCKER_PORTS=$(/usr/bin/docker port $MACH $PORT)
 KV="host=$(echo $DOCKER_PORTS | awk -F':' '{print $1}') $KV"
@@ -31,10 +31,12 @@ done
 JSON="{$JSON }"
 echo $JSON
 
+CTL="etcdctl -C http://$ETCD_IP:$ETCD_PORT"
+
 KEY="/services/${SERV}/${MACH}"
-trap "etcdctl rm $KEY; exit" SIGHUP SIGINT SIGTERM
+trap "$CTL rm $KEY; exit" SIGHUP SIGINT SIGTERM
 
 while [ 1 ]; do
-  etcdctl --debug set "$KEY" "${JSON}" --ttl 5
+  $CTL --debug set "$KEY" "${JSON}" --ttl 5
   sleep 1
 done
